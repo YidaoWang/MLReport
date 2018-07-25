@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def L1(w):
     sum = 0
@@ -26,26 +27,37 @@ def ST(q, C):
             res[i] = q[i]+C
     return res
 
-def proximal_gradient(w, eta, lam, w_t=None):
-    for i in range(100):
+def proximal_gradient(w, eta, lam, max=100, w_t=None):
+
+    line_height = np.zeros(max)
+
+    for i in range(max):
         w = ST(w-(g(w)*eta),lam*eta)
-        print("itr: ",i)
+        print("========================")
+        print(i+1)
+        print("w: ",w)
         if(w_t is not None):
-            print("err: ",np.linalg.norm(w_t-w))
+            err = np.linalg.norm(w_t-w)
+            print("err: ",err)
+            line_height[i] = err
+            
+    plt.semilogy()
+    plt.plot(np.array([i+1 for i in range(max)]), line_height)
+    plt.show()
     return w
 
 
 eta = 1/(4+np.sqrt(5))
 w = np.zeros(2)
 
-# lam = 2.
-# w_t = np.array([0.82,1.09])
+lam = 2.
+w_t = np.array([0.82,1.09])
 
 # lam = 4.
 # w_t = np.array([0.64,0.18])
 
-lam = 6.
-w_t = np.array([0.33,0])
+# lam = 6.
+# w_t = np.array([0.33,0])
 
 proximal_gradient(w,eta,lam,w_t=w_t)
 
