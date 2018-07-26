@@ -19,7 +19,7 @@ def K(X,y):
     k = np.ones((n, n))
     for i in range(n):
         for j in range(n):
-            k = y[i]*y[j]*np.dot(X[i],X[j])
+            k[i,j] = y[i]*y[j]*np.dot(X[i],X[j])
     return k
 
 def objectiv_fn(w,x,y,lam):
@@ -32,9 +32,9 @@ def objectiv_fn(w,x,y,lam):
 def dual_fn(alpha,x,y,lam):
     return -1/(4*lam)*np.dot(alpha,np.dot(K(x,y),alpha))+np.dot(alpha,np.ones(len(alpha)))
 
-def projected_gradient(x,y,alpha,eta=0.001,lam=1,max=100):
+def projected_gradient(x,y,alpha,eta=0.05,lam=1,max=1000):
     n=len(y)
-    m=len(x[0,:])
+    m=len(x[0])
     line_height = np.zeros(max)
 
     for i in range(max):
@@ -45,10 +45,12 @@ def projected_gradient(x,y,alpha,eta=0.001,lam=1,max=100):
         for j in range(n):
             w += alpha[j]*y[j]*x[j]
         w = 1/(2*lam)*w
+        print("w: ",w)
         obj = objectiv_fn(w,x,y,lam)
         dual = dual_fn(alpha,x,y,lam)
-        line_height[i] = np.abs(obj - dual)
-        print(line_height[i])
+        print("f: ",obj)
+        line_height[i] = np.linalg.norm(obj - dual)
+        print("dual err: ",line_height[i])
             
     plt.semilogy()
     plt.plot(np.array([i+1 for i in range(max)]), line_height)
