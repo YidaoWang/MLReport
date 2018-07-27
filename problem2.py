@@ -17,25 +17,23 @@ def ST(q, C):
             res[i] = q[i]+C
     return res
 
-def proximal_gradient(w, g, eta, lam, max=30, w_t=None):
-
+def proximal_gradient(w, g, eta, lam, w_t, max=30):
     line_height = np.zeros(max)
+    print("repeat count, error")
 
     for i in range(max):
         w = ST(w-(g(w)*eta),lam*eta)
-        print(i+1,"========================")
-        print("w: ",w)
-        if(w_t is not None):
-            err = np.linalg.norm(w_t-w)
-            print("err: ",err)
-            line_height[i] = err
+        err = np.linalg.norm(w_t-w)
+        print("{0}, {1}".format(i+1,err))
+        line_height[i] = err
             
     plt.semilogy()
     plt.plot(np.array([i+1 for i in range(max)]), line_height)
     plt.show()
     return w
 
-def accelerated_proximal_gradient(w, g, eta, lam, max=30, w_t=None):
+def accelerated_proximal_gradient(w, g, eta, lam, w_t, max=30):
+    print("repeat count, error")
     line_height = np.zeros(max)
     s1 = 1.
     for i in range(max):
@@ -43,12 +41,9 @@ def accelerated_proximal_gradient(w, g, eta, lam, max=30, w_t=None):
         w1=ST(w-(g(w)*eta),lam*eta)
         s1=(1+np.sqrt(1+4*s*s))/2.
         w=w1+((s-1)/s1)*(w1-w)
-        print(i+1,"=========================")
-        print("w: ",w)
-        if(w_t is not None):
-            err = np.linalg.norm(w_t-w)
-            print("err: ",err)
-            line_height[i] = err
+        err = np.linalg.norm(w_t-w)
+        print("{0}, {1}".format(i+1,err))
+        line_height[i] = err
             
     plt.semilogy()
     plt.plot(np.array([i+1 for i in range(max)]), line_height)
@@ -63,11 +58,11 @@ def exam1():
     g = lambda w:2*np.dot(A, w-mu)
     # lam = 2.
     # w_t = np.array([0.82,1.09])
-    lam = 4.
-    w_t = np.array([0.64,0.18])
-    # lam = 6.
-    # w_t = np.array([0.33,0])
-    proximal_gradient(w,g,eta,lam,w_t=w_t)
+    # lam = 4.
+    # w_t = np.array([0.64,0.18])
+    lam = 6.
+    w_t = np.array([0.33,0])
+    proximal_gradient(w,g,eta,lam,w_t)
 
 def exam2():
     eta = 1/(4+np.sqrt(5))
@@ -77,10 +72,11 @@ def exam2():
     g = lambda w:2*np.dot(A, w-mu)
     # lam = 2.
     # w_t = np.array([0.82,1.09])
-    lam = 4.
-    w_t = np.array([0.64,0.18])
-    # lam = 6.
-    # w_t = np.array([0.33,0])
-    accelerated_proximal_gradient(w,g,eta,lam,w_t=w_t)
+    # lam = 4.
+    # w_t = np.array([0.64,0.18])
+    lam = 6.
+    w_t = np.array([0.33,0])
+    accelerated_proximal_gradient(w,g,eta,lam,w_t)
 
+#exam1()
 exam2()
