@@ -32,25 +32,23 @@ def objectiv_fn(w,x,y,lam):
 def dual_fn(alpha,x,y,lam):
     return -1/(4*lam)*np.dot(alpha,np.dot(K(x,y),alpha))+np.dot(alpha,np.ones(len(alpha)))
 
-def projected_gradient(x,y,alpha,eta=0.05,lam=1,max=1000):
+def projected_gradient(x,y,alpha,eta=0.05,lam=1,max=300):
     n=len(y)
     m=len(x[0])
     line_height = np.zeros(max)
 
+    print("repeat count,primary,dual Lagrange,duality gap")
     for i in range(max):
         alpha = P(alpha-eta*(1/(2*lam)*np.dot(K(x,y),alpha)-1))
-        print(i+1,"========================")
         #print("alpha: ",alpha)
         w = np.zeros(m)
         for j in range(n):
             w += alpha[j]*y[j]*x[j]
         w = 1/(2*lam)*w
-        print("w: ",w)
         obj = objectiv_fn(w,x,y,lam)
         dual = dual_fn(alpha,x,y,lam)
-        print("f: ",obj)
-        line_height[i] = np.linalg.norm(obj - dual)
-        print("dual err: ",line_height[i])
+        line_height[i] = obj - dual
+        print("{0}, {1}, {2}, {3}".format(i+1,obj,dual,line_height[i]))
             
     plt.semilogy()
     plt.plot(np.array([i+1 for i in range(max)]), line_height)
